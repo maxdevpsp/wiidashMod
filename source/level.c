@@ -102,6 +102,10 @@ LevelDefinition levels[] = {
     {
         .level_name = "auto jumper",
         .data_ptr  = AutoJumper_gmd
+    },
+    {
+        .level_name = "Phazd",
+        .data_ptr = Phazd_gmd
     }
 };
 
@@ -185,6 +189,10 @@ SongDefinition songs[] = {
     {
         .song_name = "Deadlocked.mp3",
         .tempo = 135
+    },
+    {
+        .song_name = "Phazd.mp3",
+        .tempo = 165
     }
 };
 

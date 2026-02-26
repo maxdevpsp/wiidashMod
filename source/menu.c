@@ -140,6 +140,7 @@ const int default_level_difficulty[LEVEL_NUM] = {
   5,
   5,
   6,
+  2
 };
 
 #define FACES_COUNT 7

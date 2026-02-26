@@ -22,8 +22,10 @@
 
 GRRLIB_texImg *icon_l1;
 GRRLIB_texImg *icon_l2;
+GRRLIB_texImg *icon_glow;
 GRRLIB_texImg *ship_l1;
 GRRLIB_texImg *ship_l2;
+GRRLIB_texImg *ship_glow;
 GRRLIB_texImg *ball_l1;
 GRRLIB_texImg *ball_l2;
 GRRLIB_texImg *ufo_l1;
@@ -1317,8 +1319,10 @@ void handle_death() {
 void load_icons() {
     icon_l1 = GRRLIB_LoadTexturePNG(player_01_001_png);
     icon_l2 = GRRLIB_LoadTexturePNG(player_01_2_001_png);
+    icon_glow = GRRLIB_LoadTexturePNG(player_01_glow_png);
     ship_l1 = GRRLIB_LoadTexturePNG(ship_01_001_png);
     ship_l2 = GRRLIB_LoadTexturePNG(ship_01_2_001_png);
+    ship_glow = GRRLIB_LoadTexturePNG(ship_01_glow_png);
     ball_l1 = GRRLIB_LoadTexturePNG(player_ball_01_001_png);
     ball_l2 = GRRLIB_LoadTexturePNG(player_ball_01_2_001_png);
     ufo_l1 = GRRLIB_LoadTexturePNG(bird_01_001_png);
@@ -1350,8 +1354,10 @@ void load_icons() {
 void unload_icons() {
     GRRLIB_FreeTexture(icon_l1);
     GRRLIB_FreeTexture(icon_l2);
+    GRRLIB_FreeTexture(icon_glow);
     GRRLIB_FreeTexture(ship_l1);
     GRRLIB_FreeTexture(ship_l2);
+    GRRLIB_FreeTexture(ship_glow);
     GRRLIB_FreeTexture(ball_l1);
     GRRLIB_FreeTexture(ball_l2);
     GRRLIB_FreeTexture(ufo_l1);
@@ -1373,8 +1379,10 @@ void unload_icons() {
 void draw_ship(Player *player, float calc_x, float calc_y) {
     GRRLIB_SetHandle(icon_l1, icon_l1->w / 2, icon_l1->h / 2);
     GRRLIB_SetHandle(icon_l2, icon_l2->w / 2, icon_l2->h / 2);
+    GRRLIB_SetHandle(icon_glow, 33, 33);
     GRRLIB_SetHandle(ship_l1, ship_l1->w / 2, ship_l1->h / 2);
     GRRLIB_SetHandle(ship_l2, ship_l2->w / 2, ship_l2->h / 2);
+    GRRLIB_SetHandle(ship_glow, ship_l2->w / 2, 24.5);
     
     float scale = ((player->mini) ? 0.6f : 1.f) * screen_factor_y;
 
@@ -1415,6 +1423,16 @@ void draw_ship(Player *player, float calc_x, float calc_y) {
         RGBA(p2.r, p2.g, p2.b, 255)
     );
 
+    set_texture(icon_glow);
+    // Glow (icon)
+    custom_drawImg(
+        x + 3 - (30), y + 3 - (30),
+        icon_glow,
+        calculated_rotation,
+        calculated_scale / CUBE_DIVISOR, (0.733f * scale) / CUBE_DIVISOR,
+        RGBA(p2.r, p2.g, p2.b, 255)
+    );
+
     float y_rot = (player->upside_down) ? -4 : 12;
     if (player->mini) {
         y_rot = (player->upside_down) ? 0 : 9.6;
@@ -1446,11 +1464,22 @@ void draw_ship(Player *player, float calc_x, float calc_y) {
         calculated_scale, (0.733f * scale) * mult,
         RGBA(p2.r, p2.g, p2.b, 255)
     );
+
+    set_texture(ship_glow);
+    // Glow (ship)
+    custom_drawImg(
+        x + 5 - (30), y + 7 - (30),
+        ship_l1,
+        calculated_rotation,
+        calculated_scale, (0.733f * scale) * mult,
+        RGBA(p2.r, p2.g, p2.b, 255)
+    );
 }
 
 void draw_ufo(Player *player, float calc_x, float calc_y) {
     GRRLIB_SetHandle(icon_l1,  icon_l1->w / 2,  icon_l1->h / 2);
     GRRLIB_SetHandle(icon_l2,  icon_l2->w / 2,  icon_l2->h / 2);
+    GRRLIB_SetHandle(icon_glow,  33,  33);
     GRRLIB_SetHandle(ufo_l1,   ufo_l1->w / 2,   ufo_l1->h / 2); 
     GRRLIB_SetHandle(ufo_l2,   ufo_l2->w / 2,   ufo_l2->h / 2); 
     GRRLIB_SetHandle(ufo_dome, ufo_dome->w / 2, ufo_dome->h / 2); 
@@ -1513,6 +1542,16 @@ void draw_ufo(Player *player, float calc_x, float calc_y) {
     custom_drawImg(
         x + 6 - (30), y + 6 - (30),
         icon_l2,
+        calculated_rotation,
+        calculated_scale / CUBE_DIVISOR, (0.733f * scale) / CUBE_DIVISOR,
+        RGBA(p2.r, p2.g, p2.b, 255)
+    );
+
+    set_texture(icon_glow);
+
+    custom_drawImg(
+        x + 3 - (30), y + 3 - (30),
+        icon_glow,
         calculated_rotation,
         calculated_scale / CUBE_DIVISOR, (0.733f * scale) / CUBE_DIVISOR,
         RGBA(p2.r, p2.g, p2.b, 255)
@@ -1584,6 +1623,7 @@ void draw_player(Player *player) {
         case GAMEMODE_CUBE:
             GRRLIB_SetHandle(icon_l1, 30, 30);
             GRRLIB_SetHandle(icon_l2, 30, 30);
+            GRRLIB_SetHandle(icon_glow, 33, 33);
             
             set_texture(icon_l1);
             custom_drawImg(
@@ -1599,6 +1639,16 @@ void draw_player(Player *player) {
             custom_drawImg(
                 get_mirror_x(calc_x, state.mirror_factor) + 6 - (30), calc_y + 6 - (30),
                 icon_l2,
+                player->lerp_rotation * state.mirror_mult,
+                BASE_SCALE * state.mirror_mult * scale,
+                BASE_SCALE * scale,
+                RGBA(p2.r, p2.g, p2.b, 255)
+            );
+
+            set_texture(icon_glow);
+            custom_drawImg(
+                get_mirror_x(calc_x, state.mirror_factor) + 3 - (30), calc_y + 3 - (30),
+                icon_glow,
                 player->lerp_rotation * state.mirror_mult,
                 BASE_SCALE * state.mirror_mult * scale,
                 BASE_SCALE * scale,
